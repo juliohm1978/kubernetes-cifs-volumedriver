@@ -6,7 +6,7 @@ It has been tested under Kubernetes 1.8.x and 1.9.x.
 
 ## Pre-requisites
 
-There are few requirements for this to work. On your Kubernetes nodes, simply install a couple of dependencies: `cifs-utils` because the host itself will do the mounting and `jq` to parse json coming from the k8s api.
+On your Kubernetes nodes, simply install a couple of dependencies: `cifs-utils` because the host itself will do the mounting and `jq` to parse json coming from the k8s api.
 
 ```bash
 sudo apt-get install -y jq cifs-utils
