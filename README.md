@@ -34,7 +34,7 @@ Feel free to automate your installation in any way, shape or form. Once the scri
 
 ## DaemonSet Installation
 
-As proposed in Flexvolume's documentation, the recommended driver deployment method is to have a DaemonSet install the driver cluster-wide automatically.
+As proposed in [Flexvolume's documentation](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/storage/flexvolume-deployment.md#recommended-driver-deployment-method), the recommended driver deployment method is to have a DaemonSet install the driver cluster-wide automatically.
 
 A Docker image [juliohm/kubernetes-cifs-volumedriver-intaller](https://hub.docker.com/r/juliohm/kubernetes-cifs-volumedriver-installer/) is available for this purpose, which can be deployed into a Kubernetes cluster using the `install.yaml` from this repository.
 
