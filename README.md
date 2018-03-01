@@ -18,19 +18,41 @@ For CentOS:
 yum -y install jq cifs-utils
 ```
 
-## Installation
+## Manual Installation
 
-This should not be a problem for different hosts, since it's very straight forward. The `juliohm1978~cifs` directory simply needs to be copied to `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` and the script `cifs` needs permission to be executed.
+Manual installation is very straight forward. The `juliohm~cifs` directory simply needs to be copied to `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` and the script `cifs` needs permission to be executed.
 
-The `install.sh` script included does that as an example:
+Below is an example:
 
 ```bash
 ## as root
-cp -vr juliohm1978~cifs /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
-chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm1978~cifs/*
+cp -vr juliohm~cifs /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
+chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs/*
 ```
 
 Feel free to automate your installation in any way, shape or form. Once the script is copied and marked as executable, Kubelet should automatically pick it up and it should be working.
+
+## DaemonSet Installation
+
+As proposed in Flexvolume's documentation, the recommended driver deployment method is to have a DaemonSet install the driver cluster-wide automatically.
+
+A Docker image [juliohm/kubernetes-cifs-volumedriver-intaller](https://hub.docker.com/r/juliohm/kubernetes-cifs-volumedriver-installer/) is available for this purpose, which can be deployed into a Kubernetes cluster using the `install.yaml` from this repository.
+
+Deploying the volume driver should be as easy as:
+
+```bash
+kubectl apply -f install.yaml
+```
+
+This creates a privileged DaemonSet with pods that mount the host directory `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` internally as `/flexmnt` for installation. Check the output from the deployed containers to make sure it did not produce any errors. Crashing pods mean something went wrong.
+
+*NOTE*: This deployment does NOT install host dependencies, which still needs to be done manually on all hosts. See previous chapter *Pre-requisites*.
+
+Once you have verified that installation was completed, the DaemonSet can be safely removed.
+
+```bash
+kubectl delete -f install.yaml
+```
 
 ## Example of PersistentVolume
 
@@ -44,7 +66,7 @@ spec:
   capacity:
     storage: 1Gi
   flexVolume:
-    driver: juliohm1978/cifs
+    driver: juliohm/cifs
     options:
       opts: sec=ntlm,uid=1000
       server: my-cifs-host
@@ -63,7 +85,7 @@ data:
 kind: Secret
 metadata:
   name: my-secret
-type: juliohm1978/cifs
+type: juliohm/cifs
 ```
 
 *NOTE*: Pay attention to the secret's `type` field, which MUST match the volume driver name. Otherwise the secret values will not be passed to the mount script.

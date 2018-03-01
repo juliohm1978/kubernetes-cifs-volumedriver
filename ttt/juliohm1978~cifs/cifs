@@ -1,0 +1,151 @@
+#!/bin/bash
+
+# Example of a json payload received by this script (k8s 1.8)
+#		{
+#			"kubernetes.io/fsType": "cifs",
+#			"kubernetes.io/pod.name": "testcifs-node0",
+#			"kubernetes.io/pod.namespace": "default",
+#			"kubernetes.io/pod.uid": "91d86beda23229b4a609a39d936c5690",
+#			"kubernetes.io/pvOrVolumeName": "test",
+#			"kubernetes.io/readwrite": "rw",
+#			"kubernetes.io/secret/password": "***",
+#			"kubernetes.io/secret/username": "***",
+#			"kubernetes.io/serviceAccount.name": "",
+#			"opts": "sec=ntlm,uid=106",
+#			"server": "my-cifs-host",
+#			"share": "/MySharedDirectory"
+#		}
+
+usage() {
+  err "Invalid usage. Usage: "
+  err "\t$0 init"
+  err "\t$0 mount <mount dir> <json params>"
+  err "\t$0 unmount <mount dir>"
+  exit 1
+}
+
+err() {
+  echo -ne $* 1>&2
+}
+
+log() {
+  echo -ne $* >&1
+}
+
+## use this for logging and debugging
+# logg() {
+#   echo -e $* >> /tmp/asdf.log
+# }
+
+ismounted() {
+  MOUNT=`findmnt -n ${MNTPATH} 2>/dev/null | cut -d' ' -f1`
+  if [ "${MOUNT}" == "${MNTPATH}" ]; then
+    echo "1"
+  else
+    echo "0"
+  fi
+}
+
+domount() {
+  MNTPATH=$1
+
+  CIFS_SERVER=$(echo $2 | jq -r '.server')
+  CIFS_SHARE=$(echo $2 | jq -r '.share')
+  PODID=$(echo $2 | jq -r '.["kubernetes.io/pod.uid"] // empty')
+  DOMAIN=$(echo $2 | jq -r '.["kubernetes.io/secret/domain"] // empty' | base64 -d)
+  PASSWORD=$(echo $2 | jq -r '.["kubernetes.io/secret/password"] // empty' | base64 -d)
+  USERNAME=$(echo $2 | jq -r '.["kubernetes.io/secret/username"] // empty' | base64 -d)
+  READWRITE=$(echo $2 | jq -r '.["kubernetes.io/readwrite"] // empty')
+  OPTS=$(echo $2 | jq -r '.opts')
+
+  if [[ "$READWRITE" == "" ]]; then
+    READWRITE="rw"
+  fi
+
+  ## Complex passwords with symbols and special characters
+  ## are a painful to deal with in a shell script.
+  ## This works around that by saving credentials in a
+  ## temporary file.
+  FINALOPTS="credentials=/tmp/temporary.$PODID.tmp"
+
+  if [[ "$OPTS" != "" ]]; then
+    FINALOPTS="$FINALOPTS,$OPTS,$READWRITE"
+  fi
+
+  if [ $(ismounted) -eq 1 ] ; then
+    log '{"status": "Success"}'
+    exit 0
+  fi
+
+  mkdir -p ${MNTPATH} &> /dev/null
+
+  rm -fr /tmp/temporary.$PODID.tmp
+  if [[ "$USERNAME" != "" ]]; then
+    echo "username=$USERNAME" >> /tmp/temporary.$PODID.tmp
+  fi
+  if [[ "$DOMAIN" != "" ]]; then
+          echo "domain=$DOMAIN" >> /tmp/temporary.$PODID.tmp
+  fi
+  if [[ "$PASSWORD" != "" ]]; then
+          echo "password=$PASSWORD" >> /tmp/temporary.$PODID.tmp
+  fi
+
+  mount -t cifs -o $FINALOPTS "//$CIFS_SERVER$CIFS_SHARE" "$MNTPATH" &> /dev/null
+  R=$?
+  rm -fr /tmp/temporary.$PODID.tmp
+  if [ $R -ne 0 ]; then
+    err "{ \"status\": \"Failure\", \"message\": \"Failed to mount ${CIFS_SERVER}:${CIFS_SHARE} at ${MNTPATH} returncode=$R\"}"
+    exit 1
+  fi
+  log '{"status": "Success"}'
+  exit 0
+}
+
+unmount() {
+  MNTPATH=$1
+  if [ $(ismounted) -eq 0 ] ; then
+    log '{"status": "Success"}'
+    exit 0
+  fi
+
+  umount ${MNTPATH} &> /dev/null
+  if [ $? -ne 0 ]; then
+    err "{ \"status\": \"Failed\", \"message\": \"Failed to unmount volume at ${MNTPATH}\"}"
+    exit 1
+  fi
+
+  log '{"status": "Success"}'
+  exit 0
+}
+
+op=$1
+
+if ! command -v jq >/dev/null 2>&1; then
+  err "{ \"status\": \"Failure\", \"message\": \"'jq' binary not found. Please install jq package before using this driver\"}"
+  exit 1
+fi
+
+if [ "$op" = "init" ]; then
+  log '{"status": "Success", "capabilities": {"attach": false}}'
+  exit 0
+fi
+
+if [ $# -lt 2 ]; then
+  usage
+fi
+
+shift
+
+case "$op" in
+  mount)
+    domount $*
+    ;;
+  unmount)
+    unmount $*
+    ;;
+  *)
+    log '{"status": "Not supported"}'
+    exit 0
+esac
+
+exit 1
