@@ -1,6 +1,6 @@
 # Kubernetes CIFS Volume Driver
 
-A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/edit/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
+A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/blob/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
 
 It has been tested under Kubernetes 1.8.x and 1.9.x.
 
