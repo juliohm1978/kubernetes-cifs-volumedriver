@@ -30,9 +30,9 @@ cp -vr juliohm~cifs /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
 chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs/*
 ```
 
-This procedure should be simple enough for a small cluster, so feel free to automate your installation in any way, shape or form. Once the script is copied and marked as executable, Kubelet should automatically pick it up and it should be working.
+This procedure should be simple enough for testing purposes, so feel free to automate this in any way, shape or form. Once the script is copied and marked as executable, Kubelet should automatically pick it up and it should be working.
 
-When dealing with a large cluster, manually copying the driver becomes inhuman. In most cases, the DaemonSet installation should make things easier.
+When dealing with a large cluster, manually copying the driver to all hosts becomes inhuman. For that and most cases in general, the DaemonSet installation should make things easier.
 
 ## DaemonSet Installation
 
