@@ -20,7 +20,7 @@ yum -y install jq cifs-utils
 
 ## Manual Installation
 
-Flexvolumes is very straight forward. The `juliohm~cifs` directory simply needs to be copied to `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` and the script `cifs` needs permission to be executed.
+Flexvolumes are very straight forward. The `juliohm~cifs` directory simply needs to be copied to `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` and the script `cifs` needs permission to be executed.
 
 Below is an example:
 
