@@ -64,6 +64,7 @@ kubectl delete -f install.yaml
 The following is an example of PersistentVolume that uses the volume driver.
 
 ```yaml
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: mycifspv
