@@ -23,7 +23,7 @@ yum -y install jq cifs-utils
 
 ## Manual Installation
 
-Flexvolumes are very straight forward. The `juliohm~cifs` directory simply needs to be copied into the volume plugin directory of your Kubernetes cluster. 
+Flexvolumes are very straight forward. The `juliohm~cifs` directory simply needs to be copied into the volume plugin directory of your Kubernetes cluster.
 
 Below is an example:
 
