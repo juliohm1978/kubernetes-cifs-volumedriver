@@ -23,12 +23,12 @@ yum -y install jq cifs-utils
 
 ## Manual Installation
 
-Flexvolumes are very straight forward. The `juliohm~cifs` directory simply needs to be copied to `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` and the script `cifs` needs permission to be executed.
+Flexvolumes are very straight forward. The `juliohm~cifs` directory simply needs to be copied into the volume plugin directory of your Kubernetes cluster. 
 
 Below is an example:
 
 ```bash
-## as root
+## as root in all kubernetes nodes
 cp -vr juliohm~cifs /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
 chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs/*
 ```
@@ -58,6 +58,12 @@ Once you have verified that installation was completed, the DaemonSet can be saf
 ```bash
 kubectl delete -f install.yaml
 ```
+
+## Notes on the volume plugin directory
+
+Kubelet's default directory for volume plugins is `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/`. This might be different if your installation changed this directory using the `--volume-plugin-dir` parameter.
+
+A known example of this change is the installation provided by [Kubespray](https://github.com/kubernetes-incubator/kubespray), which at version v2.4.0 uses `/var/lib/kubelet/volume-plugins`.
 
 ## Example of PersistentVolume
 
