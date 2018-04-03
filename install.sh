@@ -34,6 +34,8 @@ Make sure /flexmnt from this container mounts to Kubernetes driver directory.
   k8s 1.8.x
   /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
 
+This path may be different in you system due to kubelet parameter --volume-plugin-dir.
+
 This driver depends on the following packages to be installed on the host:
 
   ## ubuntu

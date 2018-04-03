@@ -1,5 +1,5 @@
 TAGNAME = juliohm/kubernetes-cifs-volumedriver-installer
-VERSION = 0.2
+VERSION = 0.3
 
 build: Dockerfile
 	docker build -t $(TAGNAME):$(VERSION) .

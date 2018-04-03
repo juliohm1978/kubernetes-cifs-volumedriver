@@ -94,7 +94,7 @@ domount() {
   R=$?
   rm -fr /tmp/temporary.$PODID.tmp
   if [ $R -ne 0 ]; then
-    err "{ \"status\": \"Failure\", \"message\": \"Failed to mount ${CIFS_SERVER}:${CIFS_SHARE} at ${MNTPATH} returncode=$R\"}"
+    err "{ \"status\": \"Failure\", \"message\": \"domain=${DOMAIN} username=${USERNAME} Failed returncode=$R mount -t cifs -o $FINALOPTS \"//$CIFS_SERVER$CIFS_SHARE\" \"$MNTPATH\"\"}"
     exit 1
   fi
   log '{"status": "Success"}'
