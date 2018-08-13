@@ -68,7 +68,7 @@ domount() {
   ## temporary file.
   FINALOPTS="credentials=/tmp/temporary.$PODID.tmp"
 
-  if [[ "$OPTS" != "" ]]; then
+  if [[ "$OPTS" != "" && $OPTS != "null" ]]; then
     FINALOPTS="$FINALOPTS,$OPTS,$READWRITE"
   fi
 

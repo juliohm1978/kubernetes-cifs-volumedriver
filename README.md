@@ -2,7 +2,7 @@
 
 A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/blob/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
 
-It has been tested under Kubernetes 1.8.x and 1.9.x.
+It has been tested under Kubernetes 1.8.x, 1.9.x, and 1.10.x.
 
 ## Pre-requisites
 
@@ -51,7 +51,7 @@ kubectl apply -f install.yaml
 
 This creates a privileged DaemonSet with pods that mount the host directory `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/` internally as `/flexmnt` for installation. Check the output from the deployed containers to make sure it did not produce any errors. Crashing pods mean something went wrong.
 
-*NOTE*: This deployment does NOT install host dependencies, which still needs to be done manually on all hosts. See previous chapter *Pre-requisites*.
+> *NOTE*: This deployment does NOT install host dependencies, which still needs to be done manually on all hosts. See previous chapter *Pre-requisites*.
 
 Once you have verified that installation was completed, the DaemonSet can be safely removed.
 
@@ -100,4 +100,4 @@ metadata:
 type: juliohm/cifs
 ```
 
-*NOTE*: Pay attention to the secret's `type` field, which MUST match the volume driver name. Otherwise the secret values will not be passed to the mount script.
+> *NOTE*: Pay attention to the secret's `type` field, which MUST match the volume driver name. Otherwise the secret values will not be passed to the mount script.
