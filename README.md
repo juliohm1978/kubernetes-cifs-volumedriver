@@ -4,14 +4,6 @@ A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kube
 
 It has been tested under Kubernetes 1.8.x, 1.9.x, and 1.10.x.
 
-## Known Issues
-
-[Issue #3](https://github.com/juliohm1978/kubernetes-cifs-volumedriver/issues/3): Version 0.3 will fail to mount volumes if `driver.options.opts` is empty. Before a next release, please use image label `0.4-beta` to work around the issue.
-
-```
-juliohm/kubernetes-cifs-volumedriver-installer:0.4-beta
-```
-
 ## Pre-requisites
 
 On your Kubernetes nodes, simply install a couple of dependencies:
