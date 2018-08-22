@@ -85,6 +85,8 @@ spec:
       share: /MySharedDirectory
     secretRef:
       name: my-secret
+  accessModes:
+    - ReadWriteMany
 ```
 
 Credentials are passed using a Secret, which can be declared as follows.
