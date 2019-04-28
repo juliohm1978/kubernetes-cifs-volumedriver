@@ -59,11 +59,13 @@ Once you have verified that installation was completed, the DaemonSet can be saf
 kubectl delete -f install.yaml
 ```
 
-## Notes on the volume plugin directory
+## The Volume Plugin Directory
 
 Kubelet's default directory for volume plugins is `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/`. This might be different if your installation changed this directory using the `--volume-plugin-dir` parameter.
 
 A known example of this change is the installation provided by [Kubespray](https://github.com/kubernetes-incubator/kubespray), which at version v2.4.0 uses `/var/lib/kubelet/volume-plugins`.
+
+If you need, review the `install.yaml` file and change the field `spec.template.spec.volumes.hostPath.path` to the path used by your Kubernetes installation.
 
 ## Example of PersistentVolume
 
