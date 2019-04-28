@@ -2,7 +2,7 @@
 
 A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/blob/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
 
-It has been tested under Kubernetes 1.8.x, 1.9.x, and 1.10.x.
+It has been tested under Kubernetes 1.8.x, 1.9.x, and 1.10.x., 1.11.x, 1.12.x.
 
 ## Pre-requisites
 
@@ -102,4 +102,20 @@ metadata:
 type: juliohm/cifs
 ```
 
-> *NOTE*: Pay attention to the secret's `type` field, which MUST match the volume driver name. Otherwise the secret values will not be passed to the mount script.
+## Notes Failures and Known Issues
+
+For most issues reported until now, the root cause was not related to the driver itself. Understanding what's happening at runtime can be challenging.
+
+Remember to install the dependencies: `jq` and `cifs-utils`. These should be installed on every node of the cluster.
+
+Pay attention to the secret's `type` field, which **MUST** match the volume driver name. Otherwise, the secret values will not be passed to the mount script.
+
+Watching the kubelet's logs on the nodes where the pod is scheduled may help you diagnose some problems. More often than not, the driver fails because the `mount` command fails with a non-zero exit code.
+
+Take note of the field `spec.flexVolume.options.opts` used in your PV and try to manually mount the volume on the same node where the pod is scheduled using the same options and credentials. Given the PV yaml in the example above, the driver would issue a command line similar to this:
+
+```
+mount -t cifs -o sec=ntlm,uid=1000,username=***,password=*** //my-cifs-host/MySharedDirectory /mnt/temp/dir
+```
+
+If that fails, it will likely give you an insight into the root cause of the problem.
