@@ -69,11 +69,13 @@ kubectl delete -f install.yaml
 
 ## The Volume Plugin Directory
 
-Kubelet's default directory for volume plugins is `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/`. This might be different if your installation changed this directory using the `--volume-plugin-dir` parameter.
+As of today with Kubernetes v1.15, the kubelet's default directory for volume plugins is `/usr/libexec/kubernetes/kubelet-plugins/volume/exec/`. This could be different if your installation changed this directory using the `--volume-plugin-dir` parameter.
 
 A known example of this change is the installation provided by [Kubespray](https://github.com/kubernetes-incubator/kubespray), which at version v2.4.0 uses `/var/lib/kubelet/volume-plugins`.
 
-If you need, review the `install.yaml` file and change the field `spec.template.spec.volumes.hostPath.path` to the path used by your Kubernetes installation.
+Please, review your [kubelet command line parameters](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) and make sure it matches the directory where the driver will be installed.
+
+You can modify `install.yaml` and change the field `spec.template.spec.volumes.hostPath.path` to the path used by your Kubernetes installation.
 
 ## Example of PersistentVolume
 
