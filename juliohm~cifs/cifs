@@ -80,6 +80,7 @@ domount() {
   mkdir -p ${MNTPATH} &> /dev/null
 
   rm -fr /tmp/temporary.$PODID.tmp
+  touch /tmp/temporary.$PODID.tmp
   if [[ "$USERNAME" != "" ]]; then
     echo "username=$USERNAME" >> /tmp/temporary.$PODID.tmp
   fi
