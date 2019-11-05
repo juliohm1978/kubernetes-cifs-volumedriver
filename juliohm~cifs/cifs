@@ -1,20 +1,19 @@
 #!/bin/bash
 
 # Example of a json payload received by this script (k8s 1.8)
-#		{
-#			"kubernetes.io/fsType": "cifs",
-#			"kubernetes.io/pod.name": "testcifs-node0",
-#			"kubernetes.io/pod.namespace": "default",
-#			"kubernetes.io/pod.uid": "91d86beda23229b4a609a39d936c5690",
-#			"kubernetes.io/pvOrVolumeName": "test",
-#			"kubernetes.io/readwrite": "rw",
-#			"kubernetes.io/secret/password": "***",
-#			"kubernetes.io/secret/username": "***",
-#			"kubernetes.io/serviceAccount.name": "",
-#			"opts": "sec=ntlm,uid=106",
-#			"server": "my-cifs-host",
-#			"share": "/MySharedDirectory"
-#		}
+# {
+#   "kubernetes.io/fsType": "",
+#   "kubernetes.io/mounterArgs.FsGroup": "33",
+#   "kubernetes.io/pod.name": "nginx-deployment-549ddfb5fc-rnqk8",
+#   "kubernetes.io/pod.namespace": "default",
+#   "kubernetes.io/pod.uid": "bb6b2e46-c80d-4c86-920c-8e08736fa211",
+#   "kubernetes.io/pvOrVolumeName": "test-volume",
+#   "kubernetes.io/readwrite": "rw",
+#   "kubernetes.io/serviceAccount.name": "default",
+#   "opts": "domain=Foo",
+#   "server": "fooserver123",
+#   "share": "/test"
+# }
 
 usage() {
   err "Invalid usage. Usage: "
@@ -49,6 +48,9 @@ ismounted() {
 domount() {
   MNTPATH=$1
 
+  # testing with minikube
+  # echo "$2" | jq '.' > /hosthome/juliohm/workspace/github/kubernetes-cifs-volumedriver/asdf.json
+
   CIFS_SERVER=$(echo $2 | jq -r '.server')
   CIFS_SHARE=$(echo $2 | jq -r '.share')
   PODID=$(echo $2 | jq -r '.["kubernetes.io/pod.uid"] // empty')
@@ -56,6 +58,7 @@ domount() {
   PASSWORD=$(echo $2 | jq -r '.["kubernetes.io/secret/password"] // empty' | base64 -d)
   USERNAME=$(echo $2 | jq -r '.["kubernetes.io/secret/username"] // empty' | base64 -d)
   READWRITE=$(echo $2 | jq -r '.["kubernetes.io/readwrite"] // empty')
+  FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/mounterArgs.FsGroup"] // empty')
   OPTS=$(echo $2 | jq -r '.opts')
 
   if [[ "$READWRITE" == "" ]]; then
@@ -70,6 +73,10 @@ domount() {
 
   if [[ "$OPTS" != "" && $OPTS != "null" ]]; then
     FINALOPTS="$FINALOPTS,$OPTS,$READWRITE"
+  fi
+
+  if [[ "$FSGROUP" != "" && "$FSGROUP" != "null" ]]; then
+    FINALOPTS="$FINALOPTS,uid=$FSGROUP,gid=$FSGROUP"
   fi
 
   if [ $(ismounted) -eq 1 ] ; then
@@ -89,6 +96,9 @@ domount() {
   if [[ "$PASSWORD" != "" ]]; then
           echo "password=$PASSWORD" >> /tmp/temporary.$PODID.tmp
   fi
+
+  # testing with minikube
+  # echo "mount -t cifs -o $FINALOPTS \"//$CIFS_SERVER$CIFS_SHARE\" \"$MNTPATH\" &> /dev/null" > /hosthome/juliohm/workspace/github/kubernetes-cifs-volumedriver/asdf.mount
 
   mount -t cifs -o $FINALOPTS "//$CIFS_SERVER$CIFS_SHARE" "$MNTPATH" &> /dev/null
   R=$?
