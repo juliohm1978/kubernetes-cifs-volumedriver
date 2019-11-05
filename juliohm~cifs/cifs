@@ -61,6 +61,12 @@ domount() {
   FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/mounterArgs.FsGroup"] // empty')
   OPTS=$(echo $2 | jq -r '.opts')
 
+  ## check for kubernetes.io/fsGroup
+  ## used in k8s versions prior do 1.15
+  if [[ "$FSGROUP" == "" ]]; then
+    FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/fsGroup"] // empty')
+  fi
+
   if [[ "$READWRITE" == "" ]]; then
     READWRITE="rw"
   fi
