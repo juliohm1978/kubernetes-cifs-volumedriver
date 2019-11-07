@@ -1,0 +1,63 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: test-volume
+spec:
+  storageClassName: none
+  capacity:
+    storage: 1Gi
+  flexVolume:
+    driver: juliohm/cifs
+    options:
+      opts: domain=Foo
+      server: fooserver123
+      share: /test
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: test-claim
+spec:
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: test-volume
+  storageClassName: none
+  accessModes:
+    - ReadWriteMany
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: test
+            mountPath: /dados
+      securityContext:
+        runAsUser: 33
+        runAsGroup: 33
+        fsGroup: 333
+      volumes:
+        - name: test
+          persistentVolumeClaim:
+            claimName: test-claim
