@@ -24,4 +24,3 @@ spec:
         - name: flexvolume-mount
           hostPath:
             path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
-

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Example of a json payload received by this script (k8s 1.8)
+# Example of a json payload received by this script (k8s 1.15+)
 # {
-#   "kubernetes.io/fsType": "",
 #   "kubernetes.io/mounterArgs.FsGroup": "33",
+#   "kubernetes.io/fsType": "",
 #   "kubernetes.io/pod.name": "nginx-deployment-549ddfb5fc-rnqk8",
 #   "kubernetes.io/pod.namespace": "default",
 #   "kubernetes.io/pod.uid": "bb6b2e46-c80d-4c86-920c-8e08736fa211",
@@ -13,6 +13,13 @@
 #   "opts": "domain=Foo",
 #   "server": "fooserver123",
 #   "share": "/test"
+# }
+#
+# k8s versions prior to 1.15 pass fsGroup differently
+# {
+# -  "kubernetes.io/mounterArgs.FsGroup": "33",
+# +  "kubernetes.io/fsGroup": "33",
+#   ...
 # }
 
 usage() {
@@ -57,30 +64,28 @@ domount() {
   DOMAIN=$(echo $2 | jq -r '.["kubernetes.io/secret/domain"] // empty' | base64 -d)
   PASSWORD=$(echo $2 | jq -r '.["kubernetes.io/secret/password"] // empty' | base64 -d)
   USERNAME=$(echo $2 | jq -r '.["kubernetes.io/secret/username"] // empty' | base64 -d)
-  READWRITE=$(echo $2 | jq -r '.["kubernetes.io/readwrite"] // empty')
-  FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/mounterArgs.FsGroup"] // empty')
-  OPTS=$(echo $2 | jq -r '.opts')
 
-  ## check for kubernetes.io/fsGroup
-  ## used in k8s versions prior do 1.15
+  READWRITE=$(echo $2 | jq -r '.["kubernetes.io/readwrite"] // empty')
+  if [[ "$READWRITE" == "" ]]; then
+    READWRITE="rw"
+  fi
+
+  FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/mounterArgs.FsGroup"] // empty')
+  ## k8s versions prior to 1.15 pass fsGroup differently
   if [[ "$FSGROUP" == "" ]]; then
     FSGROUP=$(echo $2 | jq -r '.["kubernetes.io/fsGroup"] // empty')
   fi
 
-  if [[ "$READWRITE" == "" ]]; then
-    READWRITE="rw"
-  fi
+  OPTS=$(echo $2 | jq -r '.opts')
 
   ## Complex passwords with symbols and special characters
   ## are a painful to deal with in a shell script.
   ## This works around that by saving credentials in a
   ## temporary file.
   FINALOPTS="credentials=/tmp/temporary.$PODID.tmp"
-
   if [[ "$OPTS" != "" && $OPTS != "null" ]]; then
     FINALOPTS="$FINALOPTS,$OPTS,$READWRITE"
   fi
-
   if [[ "$FSGROUP" != "" && "$FSGROUP" != "null" ]]; then
     FINALOPTS="$FINALOPTS,uid=$FSGROUP,gid=$FSGROUP"
   fi
