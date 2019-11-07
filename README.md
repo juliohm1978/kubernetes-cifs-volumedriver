@@ -11,6 +11,8 @@ It has been tested under Kubernetes versions:
 * 1.12.x
 * 1.13.x
 * 1.14.x
+* 1.15.x
+* 1.16.x
 
 ## Pre-requisites
 
@@ -112,6 +114,69 @@ kind: Secret
 metadata:
   name: my-secret
 type: juliohm/cifs
+```
+
+## Using `securityContext` to inform uid/gid parameters
+
+Starting at version 0.5, the driver will also accept values coming from the Pod's `securityContext`.
+
+For example, consider the following Deployment:
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: test
+            mountPath: /dados
+      securityContext:
+        runAsUser: 33
+        runAsGroup: 33
+        fsGroup: 33
+      volumes:
+        - name: test
+          persistentVolumeClaim:
+            claimName: test-claim
+```
+
+... which defines a `securityContext`.
+
+```yaml
+      securityContext:
+        runAsUser: 33
+        runAsGroup: 33
+        fsGroup: 33
+```
+
+The value of `fsGroup` is passed to the volume driver, but previous version would ignore that. It is now used to construct `uid` and `gid` parameters for the mount command.
+
+If you are using versions older than 0.5, you can still workaround by including these values in the `spec.flexVolume.options.opts` field of the PersistentVolume.
+
+```yaml
+## PV spec
+spec:
+  flexVolume:
+    driver: juliohm/cifs
+    options:
+      opts: domain=Foo,uid=33,gid=33
 ```
 
 ## Notes Failures and Known Issues

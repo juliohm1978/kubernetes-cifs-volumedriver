@@ -1,8 +1,11 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: juliohm-cifs-volumedriver-installer
 spec:
+  selector:
+    matchLabels:
+      app: juliohm-cifs-volumedriver-installer
   template:
     metadata:
       name: juliohm-cifs-volumedriver-installer
@@ -21,3 +24,4 @@ spec:
         - name: flexvolume-mount
           hostPath:
             path: /usr/libexec/kubernetes/kubelet-plugins/volume/exec/
+
