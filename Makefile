@@ -4,5 +4,5 @@ VERSION = 0.5
 build: Dockerfile
 	docker build -t $(TAGNAME):$(VERSION) .
 
-push:
+push: build
 	docker push $(TAGNAME):$(VERSION)
