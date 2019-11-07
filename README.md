@@ -191,7 +191,7 @@ Watching the kubelet's logs on the nodes where the pod is scheduled may help you
 
 Take note of the field `spec.flexVolume.options.opts` used in your PV and try to manually mount the volume on the same node where the pod is scheduled using the same options and credentials. Given the PV yaml in the example above, the driver would issue a command line similar to this:
 
-```
+```shell
 mount -t cifs -o sec=ntlm,uid=1000,username=***,password=*** //my-cifs-host/MySharedDirectory /mnt/temp/dir
 ```
 
