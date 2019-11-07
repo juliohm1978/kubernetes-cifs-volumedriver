@@ -166,7 +166,7 @@ spec:
         fsGroup: 33
 ```
 
-The value of `fsGroup` is passed to the volume driver, but previous version would ignore that. It is now used to construct `uid` and `gid` parameters for the mount command.
+The value of `fsGroup` is passed to the volume driver, but previous versions would ignore that. It is now used to construct `uid` and `gid` parameters for the mount command.
 
 If you are using versions older than 0.5, you can still workaround by including these values in the `spec.flexVolume.options.opts` field of the PersistentVolume.
 
