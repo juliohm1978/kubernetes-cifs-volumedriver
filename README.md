@@ -79,6 +79,9 @@ The installer image allows you to install without the need to compile the projec
 git clone https://github.com/juliohm1978/kubernetes-cifs-volumedriver.git
 cd kubernetes-cifs-volumedriver
 
+## While v2.0 is still in beta.
+git checkout golang
+
 make install
 ```
 
