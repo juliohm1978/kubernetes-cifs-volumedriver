@@ -1,5 +1,14 @@
 ---
 apiVersion: v1
+data:
+  password: dXNlcjEyMw==
+  username: cGFzczEyMw==
+kind: Secret
+metadata:
+  name: my-secret
+type: juliohm/cifs
+---
+apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: test-volume
@@ -11,8 +20,10 @@ spec:
     driver: juliohm/cifs
     options:
       opts: domain=Foo
-      server: fooserver123
-      share: /test
+      server: 10.0.0.114
+      share: /publico
+    secretRef:
+      name: my-secret
   accessModes:
     - ReadWriteMany
 ---
@@ -54,8 +65,6 @@ spec:
           - name: test
             mountPath: /dados
       securityContext:
-        runAsUser: 33
-        runAsGroup: 33
         fsGroup: 333
       volumes:
         - name: test
