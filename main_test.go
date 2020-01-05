@@ -88,27 +88,28 @@ func TestMountCmdComplete(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdComplete len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdComplete[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
-	}
+
 }
 
 // Simplest test, without any of:
@@ -131,23 +132,24 @@ func TestMountCmdSimplest(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdSimplest len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdSimplest[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -170,26 +172,25 @@ func TestMountCmdWithoutCredentials(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,rw,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdWithoutCredentials len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,rw,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdWithoutCredentials[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -215,26 +216,25 @@ func TestMountCmdFsGroupLegacy(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdWithoutCredentials len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdWithoutCredentials[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -259,26 +259,26 @@ func TestMountCmdWithoutFsGroup(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdWithoutFsGroup len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,rw,domain=domain123,username=user123,password=pass123,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdWithoutFsGroup[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -390,26 +390,26 @@ func TestMountCmdWithoutReadWrite(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdWithoutReadWrite len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdWithoutReadWrite[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -431,26 +431,26 @@ func TestMountCmdNoCredentialsAndNoOpts(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,rw",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdNoCredentialsAndNoOpts len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,rw" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdNoCredentialsAndNoOpts[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
 
@@ -475,25 +475,25 @@ func TestMountCmdNoReadWrite(t *testing.T) {
 	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
 	mountCmd := createMountCmd(args)
 	if mountCmd == nil {
-		t.Error()
+		t.Error("Mount command wasn't created")
 	}
 
-	if mountCmd.Args[0] != "mount" {
-		t.Error()
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"//fooserver123/test",
+		"/mnt/point",
 	}
-	if mountCmd.Args[1] != "-t" {
-		t.Error()
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdNoReadWrite len: expected %d, actual %d", len(mountCmd.Args), len(expected))
 	}
-	if mountCmd.Args[2] != "cifs" {
-		t.Error()
-	}
-	if mountCmd.Args[3] != "-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo" {
-		t.Error()
-	}
-	if mountCmd.Args[4] != "//fooserver123/test" {
-		t.Error()
-	}
-	if mountCmd.Args[5] != "/mnt/point" {
-		t.Error()
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdNoReadWrite[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
 	}
 }
