@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Example of a json payload received by this script (k8s 1.15+)
 # {
@@ -31,11 +31,11 @@ usage() {
 }
 
 err() {
-  echo -ne $* 1>&2
+  /bin/echo -ne $* 1>&2
 }
 
 log() {
-  echo -ne $* >&1
+  /bin/echo -ne $* >&1
 }
 
 ## use this for logging and debugging
