@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 const (
@@ -93,31 +94,31 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	}
 
 	var mArgs mounterArgs = unmarshalMounterArgs(cmdLineArgs[3])
-	var optsFinal string = "-o"
+	var optsFinal []string
 	cmd = exec.Command("mount")
 	cmd.Args = append(cmd.Args, "-t")
 	cmd.Args = append(cmd.Args, "cifs")
 
 	if mArgs.FsGroup != "" {
-		optsFinal = fmt.Sprintf("%s,uid=%s,gid=%s", optsFinal, mArgs.FsGroup, mArgs.FsGroup)
+		optsFinal = append(optsFinal, fmt.Sprintf("uid=%s,gid=%s", mArgs.FsGroup, mArgs.FsGroup))
 	}
 	if mArgs.ReadWrite != "" {
-		optsFinal = fmt.Sprintf("%s,%s", optsFinal, mArgs.ReadWrite)
+		optsFinal = append(optsFinal, mArgs.ReadWrite)
 	}
 	if mArgs.CredentialDomain != "" {
-		optsFinal = fmt.Sprintf("%s,domain=%s", optsFinal, mArgs.CredentialDomain)
+		optsFinal = append(optsFinal, fmt.Sprintf("domain=%s", mArgs.CredentialDomain))
 	}
 	if mArgs.CredentialUser != "" {
-		optsFinal = fmt.Sprintf("%s,username=%s", optsFinal, mArgs.CredentialUser)
+		optsFinal = append(optsFinal, fmt.Sprintf("username=%s", mArgs.CredentialUser))
 	}
 	if mArgs.CredentialPass != "" {
-		optsFinal = fmt.Sprintf("%s,password=%s", optsFinal, mArgs.CredentialPass)
+		optsFinal = append(optsFinal, fmt.Sprintf("password=%s", mArgs.CredentialPass))
 	}
 	if mArgs.Opts != "" {
-		optsFinal = fmt.Sprintf("%s,%s", optsFinal, mArgs.Opts)
+		optsFinal = append(optsFinal, strings.Split(mArgs.Opts, ",")...)
 	}
-	if optsFinal != "-o" {
-		cmd.Args = append(cmd.Args, optsFinal)
+	if len(optsFinal) > 0 {
+		cmd.Args = append(cmd.Args, "-o", strings.Join(optsFinal, ","))
 	}
 
 	cmd.Args = append(cmd.Args, fmt.Sprintf("//%s%s", mArgs.Server, mArgs.Share))

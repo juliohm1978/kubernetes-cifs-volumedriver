@@ -95,7 +95,8 @@ func TestMountCmdComplete(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"-o",
+		"uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -179,7 +180,8 @@ func TestMountCmdWithoutCredentials(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,rw,domain=Foo",
+		"-o",
+		"uid=33,gid=33,rw,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -223,7 +225,8 @@ func TestMountCmdFsGroupLegacy(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"-o",
+		"uid=33,gid=33,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -266,7 +269,8 @@ func TestMountCmdWithoutFsGroup(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,rw,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"-o",
+		"rw,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -397,7 +401,8 @@ func TestMountCmdWithoutReadWrite(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"-o",
+		"uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -438,7 +443,8 @@ func TestMountCmdNoCredentialsAndNoOpts(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,rw",
+		"-o",
+		"uid=33,gid=33,rw",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
@@ -482,7 +488,8 @@ func TestMountCmdNoReadWrite(t *testing.T) {
 		"mount",
 		"-t",
 		"cifs",
-		"-o,uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
+		"-o",
+		"uid=33,gid=33,domain=domain123,username=user123,password=pass123,domain=Foo",
 		"//fooserver123/test",
 		"/mnt/point",
 	}
