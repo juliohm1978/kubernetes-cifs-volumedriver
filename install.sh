@@ -40,10 +40,10 @@ This path may be different in your system due to kubelet parameter --volume-plug
 This driver depends on the following packages to be installed on the host:
 
   ## ubuntu
-  apt-get install -y cifs-utils jq
+  apt-get install -y cifs-utils
 
   ## centos
-  yum install -y cifs-utils jq
+  yum install -y cifs-utils
 
 This container can now be stopped and removed.
 
