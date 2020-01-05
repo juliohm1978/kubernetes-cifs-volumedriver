@@ -1,6 +1,9 @@
 package main
 
 import (
+	"github.com/pkg/errors"
+
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -9,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 const (
@@ -88,6 +92,28 @@ func unmarshalMounterArgs(s string) (ma mounterArgs) {
 	return
 }
 
+func runCommand(cmd *exec.Cmd) error {
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+
+	if err := cmd.Start(); err != nil {
+		return errors.Wrapf(err, "Error start cmd [cmd=%s]", cmd)
+	}
+
+	if err := cmd.Wait(); err != nil {
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			if _, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+				// The program has exited with an exit code != 0
+				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, string(b.Bytes()))
+			}
+		} else {
+			return errors.Wrapf(err, "Error waiting for cmd to finish [cmd=%s]", cmd)
+		}
+	}
+	return nil
+}
+
 func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	if len(cmdLineArgs) < 4 {
 		panic(retMsgInsufficientArgs)
@@ -164,7 +190,7 @@ func driverMain(args []string) (ret returnMsg) {
 	case "mount":
 		cmd := createMountCmd(args)
 		log.Println(cmd.Args)
-		err = cmd.Run()
+		err = runCommand(cmd)
 		if err != nil {
 			ret.Status = retStatFailure
 			ret.Message = fmt.Sprintf("Error: %s", err)
@@ -172,7 +198,7 @@ func driverMain(args []string) (ret returnMsg) {
 	case "unmount":
 		cmd := createUmountCmd(args)
 		log.Println(cmd.Args)
-		err = cmd.Run()
+		err = runCommand(cmd)
 		if err != nil {
 			ret.Status = retStatFailure
 			ret.Message = fmt.Sprintf("Error: %s", err)
