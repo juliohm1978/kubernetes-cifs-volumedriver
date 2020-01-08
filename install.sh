@@ -3,8 +3,8 @@
 set -o errexit
 set -o pipefail
 
-VENDOR=juliohm
-DRIVER=cifs
+## VENDOR and DRIVER are fixed in the Dockerfile.
+## Can be defined from the container runtime.
 
 # Assuming the single driver file is located at /$DRIVER inside the DaemonSet image.
 

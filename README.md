@@ -107,6 +107,30 @@ Please, review the [kubelet command line parameters](https://kubernetes.io/docs/
 
 You can modify `install.yaml` and change the field `spec.template.spec.volumes.hostPath.path` to the path used by your Kubernetes installation.
 
+## Customizing the Vendor/Driver name
+
+By default, the driver installation path is `$KUBELET_PLUGIN_DIRECTORY/juliohm~cifs/cifs`.
+
+For some installations, you may need to change the vendor+driver name. Starting at v2.0, you can customize the vendor name/directory for your installation by tweaking `install.yaml` and defining `VENDOR` and `DRIVER` environment variables.
+
+```yaml
+
+## snippet ##
+
+      containers:
+        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.0-beta
+          env:
+            - name: VENDOR
+              value: mycompany
+            - name: DRIVER
+              value: mycifs
+
+## snippet ##
+
+```
+
+The example above will install the driver in the path `$KUBELET_PLUGIN_DIRECTORY/mycompany~mycifs/mycifs`. For the most part, changig the `VENDOR` variable should be enough to make your installation unique to your needs.
+
 ## Example of PersistentVolume
 
 The following is an example of PersistentVolume that uses the volume driver.
