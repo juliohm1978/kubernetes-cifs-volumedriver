@@ -1,6 +1,9 @@
 package main
 
 import (
+	"github.com/pkg/errors"
+
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -8,6 +11,8 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
+	"syscall"
 )
 
 const (
@@ -31,6 +36,7 @@ type returnMsg struct {
 // Part of the repsonse that informs the driver's capabilities
 type capabilities struct {
 	Attach bool
+	Detach bool
 }
 
 // arguments passed by k8 to this driver
@@ -87,37 +93,59 @@ func unmarshalMounterArgs(s string) (ma mounterArgs) {
 	return
 }
 
+func runCommand(cmd *exec.Cmd) error {
+	var b bytes.Buffer
+	cmd.Stdout = &b
+	cmd.Stderr = &b
+
+	if err := cmd.Start(); err != nil {
+		return errors.Wrapf(err, "Error start cmd [cmd=%s]", cmd)
+	}
+
+	if err := cmd.Wait(); err != nil {
+		if exiterr, ok := err.(*exec.ExitError); ok {
+			if _, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+				// The program has exited with an exit code != 0
+				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, string(b.Bytes()))
+			}
+		} else {
+			return errors.Wrapf(err, "Error waiting for cmd to finish [cmd=%s]", cmd)
+		}
+	}
+	return nil
+}
+
 func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	if len(cmdLineArgs) < 4 {
 		panic(retMsgInsufficientArgs)
 	}
 
 	var mArgs mounterArgs = unmarshalMounterArgs(cmdLineArgs[3])
-	var optsFinal string = "-o"
+	var optsFinal []string
 	cmd = exec.Command("mount")
 	cmd.Args = append(cmd.Args, "-t")
 	cmd.Args = append(cmd.Args, "cifs")
 
 	if mArgs.FsGroup != "" {
-		optsFinal = fmt.Sprintf("%s,uid=%s,gid=%s", optsFinal, mArgs.FsGroup, mArgs.FsGroup)
+		optsFinal = append(optsFinal, fmt.Sprintf("uid=%s,gid=%s", mArgs.FsGroup, mArgs.FsGroup))
 	}
 	if mArgs.ReadWrite != "" {
-		optsFinal = fmt.Sprintf("%s,%s", optsFinal, mArgs.ReadWrite)
+		optsFinal = append(optsFinal, mArgs.ReadWrite)
 	}
 	if mArgs.CredentialDomain != "" {
-		optsFinal = fmt.Sprintf("%s,domain=%s", optsFinal, mArgs.CredentialDomain)
+		optsFinal = append(optsFinal, fmt.Sprintf("domain=%s", mArgs.CredentialDomain))
 	}
 	if mArgs.CredentialUser != "" {
-		optsFinal = fmt.Sprintf("%s,username=%s", optsFinal, mArgs.CredentialUser)
+		optsFinal = append(optsFinal, fmt.Sprintf("username=%s", mArgs.CredentialUser))
 	}
 	if mArgs.CredentialPass != "" {
-		optsFinal = fmt.Sprintf("%s,password=%s", optsFinal, mArgs.CredentialPass)
+		optsFinal = append(optsFinal, fmt.Sprintf("password=%s", mArgs.CredentialPass))
 	}
 	if mArgs.Opts != "" {
-		optsFinal = fmt.Sprintf("%s,%s", optsFinal, mArgs.Opts)
+		optsFinal = append(optsFinal, strings.Split(mArgs.Opts, ",")...)
 	}
-	if optsFinal != "-o" {
-		cmd.Args = append(cmd.Args, optsFinal)
+	if len(optsFinal) > 0 {
+		cmd.Args = append(cmd.Args, "-o", strings.Join(optsFinal, ","))
 	}
 
 	cmd.Args = append(cmd.Args, fmt.Sprintf("//%s%s", mArgs.Server, mArgs.Share))
@@ -160,10 +188,11 @@ func driverMain(args []string) (ret returnMsg) {
 		log.Println("Driver init")
 		ret.Status = retStatSuccess
 		ret.Capabilities.Attach = false
+		ret.Capabilities.Detach = false
 	case "mount":
 		cmd := createMountCmd(args)
 		log.Println(cmd.Args)
-		err = cmd.Run()
+		err = runCommand(cmd)
 		if err != nil {
 			ret.Status = retStatFailure
 			ret.Message = fmt.Sprintf("Error: %s", err)
@@ -171,7 +200,7 @@ func driverMain(args []string) (ret returnMsg) {
 	case "unmount":
 		cmd := createUmountCmd(args)
 		log.Println(cmd.Args)
-		err = cmd.Run()
+		err = runCommand(cmd)
 		if err != nil {
 			ret.Status = retStatFailure
 			ret.Message = fmt.Sprintf("Error: %s", err)
