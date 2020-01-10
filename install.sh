@@ -3,8 +3,8 @@
 set -o errexit
 set -o pipefail
 
-VENDOR=juliohm
-DRIVER=cifs
+## VENDOR and DRIVER are fixed in the Dockerfile.
+## Can be defined from the container runtime.
 
 # Assuming the single driver file is located at /$DRIVER inside the DaemonSet image.
 
@@ -16,7 +16,7 @@ if [ ! -d "/flexmnt/$driver_dir" ]; then
   mkdir "/flexmnt/$driver_dir"
 fi
 
-cp "/$DRIVER" "/flexmnt/$driver_dir/.$DRIVER"
+cp "/kubernetes-cifs-volumedriver" "/flexmnt/$driver_dir/.$DRIVER"
 mv -f "/flexmnt/$driver_dir/.$DRIVER" "/flexmnt/$driver_dir/$DRIVER"
 
 chmod +x "/flexmnt/$driver_dir/$DRIVER"
@@ -40,10 +40,10 @@ This path may be different in your system due to kubelet parameter --volume-plug
 This driver depends on the following packages to be installed on the host:
 
   ## ubuntu
-  apt-get install -y cifs-utils jq
+  apt-get install -y cifs-utils
 
   ## centos
-  yum install -y cifs-utils jq
+  yum install -y cifs-utils
 
 This container can now be stopped and removed.
 

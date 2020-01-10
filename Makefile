@@ -1,8 +1,23 @@
 TAGNAME = juliohm/kubernetes-cifs-volumedriver-installer
-VERSION = 0.6
+VERSION = 2.0-beta
 
-build: Dockerfile
+build:
+	go build -a -installsuffix cgo
+
+test:
+	go test
+
+docker: build test
 	docker build -t $(TAGNAME):$(VERSION) .
 
-push: build
+push: docker
 	docker push $(TAGNAME):$(VERSION)
+
+install:
+	kubectl apply -f install.yaml
+
+delete:
+	kubectl delete -f install.yaml
+
+clean:
+	rm -fr kubernetes-cifs-volumedriver
