@@ -1,5 +1,5 @@
 TAGNAME = juliohm/kubernetes-cifs-volumedriver-installer
-VERSION = 2.0-beta
+VERSION = 2.0
 
 build:
 	go build -a -installsuffix cgo

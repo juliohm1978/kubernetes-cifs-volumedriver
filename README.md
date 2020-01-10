@@ -18,7 +18,7 @@ It has been tested under Kubernetes versions:
 
 ## Migrated from Bash to Go
 
-Starting at v2.0-beta, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
+Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
 
 Because Go can handle Json objects natively, the `jq` dependency is no longer necessary. The driver still relies on the `mount.cifs` binary, however, which is used to issue mount commands in the host OS.
 
@@ -118,7 +118,7 @@ For some installations, you may need to change the vendor+driver name. Starting 
 ## snippet ##
 
       containers:
-        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.0-beta
+        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.0
           env:
             - name: VENDOR
               value: mycompany
@@ -260,7 +260,7 @@ Events:
 
 ### Enabling Logs
 
-Starting at v2.0-beta, the Go implementation provides a basic logging mechanism. This could help you even further to understand why your volume fails to mount.
+Starting at v2.0, the Go implementation provides a basic logging mechanism. This could help you even further to understand why your volume fails to mount.
 
 The driver attempts to write log messages to `/var/log/kubernetes-cifs-volumedriver.log`, but **only if that file already exists on disk and is writable**. Because log messages show all arguments issued to the `mount` command, password and secrets can be exposed. For that reason, logging is disabled by default. To enable, simply create the log file and wait for messages to come in.
 
