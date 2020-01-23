@@ -1,7 +1,5 @@
 # Kubernetes CIFS Volume Driver
 
-[![nodesource/node](https://dockeri.co/image/juliohm/kubernetes-cifs-volumedriver-installer)](https://registry.hub.docker.com/u/juliohm/kubernetes-cifs-volumedriver-installer/)
-
 A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/blob/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
 
 It has been tested under Kubernetes versions:
@@ -16,13 +14,12 @@ It has been tested under Kubernetes versions:
 * 1.15.x
 * 1.16.x
 
-## Migrated from Bash to Go
-
-Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
-
-Because Go can handle Json objects natively, the `jq` dependency is no longer necessary. The driver still relies on the `mount.cifs` binary, however, which is used to issue mount commands in the host OS.
-
-Aside from a different code base, all features should work the same as expected.
+> NOTE: Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
+> 
+> Because Go can handle Json objects natively, the `jq` dependency is no longer necessary. The driver still relies on the `mount.cifs` binary, however, which is used to issue mount commands in the host OS. Aside from a different code base, all features should work the same as expected.
+> 
+> The last implementation using Bash was v0.6. You can visit the tag to review the documentation for that release.
+> <https://github.com/juliohm1978/kubernetes-cifs-volumedriver/tree/v0.6>
 
 ## Pre-requisites
 
