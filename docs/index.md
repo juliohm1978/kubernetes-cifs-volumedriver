@@ -279,3 +279,15 @@ Log messages will look similar to this:
 ```
 
 Note that the complete `mount` command is on display, along with the response given to the Kubernetes API. That should give you a clear idea of what the driver is trying to do, and possibly some insight into the root cause of the problem.
+
+### Kubelet Logs
+
+While diagnosing issues, you might also want to checkout the output of the `kubelet` daemon. It rus on every node, in the host OS and is responsible for creating and destroying pods/containers.
+
+The location for its log file can vary, depending on how you provisioned your cluster. For Ubuntu, `kubelet` is usually installed as system service. In that case, you can use `journalctl`.
+
+```shell
+journalctl -f -u kubelet
+```
+
+The output of `kubelet` may also give you clues and relevant error messages.
