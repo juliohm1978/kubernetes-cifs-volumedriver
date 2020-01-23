@@ -1,6 +1,6 @@
 # Kubernetes CIFS Volume Driver
 
-[![nodesource/node](http://dockeri.co/image/juliohm/kubernetes-cifs-volumedriver-installer)](https://registry.hub.docker.com/u/juliohm/kubernetes-cifs-volumedriver-installer/)
+[![nodesource/node](https://dockeri.co/image/juliohm/kubernetes-cifs-volumedriver-installer)](https://registry.hub.docker.com/u/juliohm/kubernetes-cifs-volumedriver-installer/)
 
 A simple volume driver based on [Kubernetes' Flexvolume](https://github.com/kubernetes/community/blob/master/contributors/devel/flexvolume.md) that allows Kubernetes hosts to mount CIFS volumes (samba shares) into pods and containers.
 
