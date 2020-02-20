@@ -3,7 +3,7 @@ RUN apk --no-cache add build-base git gcc
 
 ADD . /kubernetes-cifs-volumedriver
 WORKDIR /kubernetes-cifs-volumedriver
-RUN go build -a -installsuffix cgo
+RUN go build -a -installsuffix cgo && go test
 
 FROM busybox:1.28.4
 
