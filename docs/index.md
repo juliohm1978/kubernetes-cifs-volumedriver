@@ -15,9 +15,9 @@ It has been tested under Kubernetes versions:
 * 1.16.x
 
 > NOTE: Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
-> 
+>
 > Because Go can handle Json objects natively, the `jq` dependency is no longer necessary. The driver still relies on the `mount.cifs` binary, however, which is used to issue mount commands in the host OS. Aside from a different code base, all features should work the same as expected.
-> 
+>
 > The last implementation using Bash was v0.6. You can visit the tag to review the documentation for that release.
 > <https://github.com/juliohm1978/kubernetes-cifs-volumedriver/tree/v0.6>
 
@@ -51,6 +51,9 @@ make
 
 ## if you want to be sure, run the test suite
 make test
+
+## Alternatively, you can use docker build to create the binary inside the docker image.
+make docker
 ```
 
 That should create the binary `kubernetes-cifs-volumedriver` that you can copy to your Kubernetes nodes.
