@@ -51,12 +51,14 @@ make
 
 ## if you want to be sure, run the test suite
 make test
-
-## Alternatively, you can use docker build to create the binary inside the docker image.
-make docker
 ```
 
 That should create the binary `kubernetes-cifs-volumedriver` that you can copy to your Kubernetes nodes.
+
+```bash
+## Alternatively, you can use docker build to create the binary inside a docker image.
+make docker
+```
 
 ```bash
 ## as root in all kubernetes nodes
