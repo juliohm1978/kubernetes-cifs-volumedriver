@@ -13,6 +13,7 @@ It has been tested under Kubernetes versions:
 * 1.14.x
 * 1.15.x
 * 1.16.x
+* 1.17.x
 
 > NOTE: Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
 >
@@ -296,3 +297,21 @@ journalctl -f -u kubelet
 ```
 
 The output of `kubelet` may also give you clues and relevant error messages.
+
+### Passwords and Secrets
+
+A common option is to store mount credencials in a [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret) object. When creating a Secret, the contents must be base 64 encoded. One of the most common ways is to use well known Linux tools, like `echo` and `base64`.
+
+While convenient, you must be careful not to accidentally include an **new line character** at the end of your password. If hidden in the Secret, it will prevent your volume from being mounted, failing with permissions errors.
+
+```bash
+## Watch out for hidden new line chars
+> echo hello | base64
+aGVsbG8K
+
+## This is the correct way to encode your password
+> echo -n hello | base64
+aGVsbG8=
+```
+
+By default, `echo` includes a new line character at the end of its output. To avoid that, you must use the `-n` flag.
