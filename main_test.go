@@ -554,3 +554,51 @@ func TestMountCmdNewline(t *testing.T) {
 		}
 	}
 }
+
+func TestMountCmdReturn(t *testing.T) {
+
+	jsonArgs := fmt.Sprintf(`{
+	  "kubernetes.io/mounterArgs.FsGroup": "33",
+	  "kubernetes.io/fsType": "",
+	  "kubernetes.io/pod.name": "nginx-deployment-549ddfb5fc-rnqk8",
+	  "kubernetes.io/pod.namespace": "default",
+	  "kubernetes.io/pod.uid": "bb6b2e46-c80d-4c86-920c-8e08736fa211",
+	  "kubernetes.io/pvOrVolumeName": "test-volume",
+	  "kubernetes.io/serviceAccount.name": "default",
+	  "kubernetes.io/secret/domain": "%s",
+	  "kubernetes.io/secret/username": "%s",
+	  "kubernetes.io/secret/password": "%s",
+	  "server": "fooserver123",
+	  "share": "/test"
+	}`,
+		base64.StdEncoding.EncodeToString([]byte("domain123\n\r")),
+		base64.StdEncoding.EncodeToString([]byte("user123\n\r")),
+		base64.StdEncoding.EncodeToString([]byte("pass123\n\r")),
+	)
+
+	args := []string{"/path/to/binary", "mount", "/mnt/point", jsonArgs}
+	mountCmd := createMountCmd(args)
+	if mountCmd == nil {
+		t.Error("Mount command wasn't created")
+	}
+
+	expected := []string{
+		"mount",
+		"-t",
+		"cifs",
+		"-o",
+		"uid=33,gid=33,domain=domain123,username=user123,password=pass123",
+		"//fooserver123/test",
+		"/mnt/point",
+	}
+
+	if len(mountCmd.Args) != len(expected) {
+		t.Errorf("TestMountCmdNoReadWrite len: expected %d, actual %d", len(mountCmd.Args), len(expected))
+	}
+
+	for idx := range expected {
+		if mountCmd.Args[idx] != expected[idx] {
+			t.Errorf("TestMountCmdNoReadWrite[%d]: expected %s, actual %s", idx, expected[idx], mountCmd.Args[idx])
+		}
+	}
+}

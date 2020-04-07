@@ -133,13 +133,13 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 		optsFinal = append(optsFinal, mArgs.ReadWrite)
 	}
 	if mArgs.CredentialDomain != "" {
-		optsFinal = append(optsFinal, fmt.Sprintf("domain=%s", strings.TrimSpace(mArgs.CredentialDomain)))
+		optsFinal = append(optsFinal, fmt.Sprintf("domain=%s", strings.Trim(mArgs.CredentialDomain, "\n\r")))
 	}
 	if mArgs.CredentialUser != "" {
-		optsFinal = append(optsFinal, fmt.Sprintf("username=%s", strings.TrimSpace(mArgs.CredentialUser)))
+		optsFinal = append(optsFinal, fmt.Sprintf("username=%s", strings.Trim(mArgs.CredentialUser, "\n\r")))
 	}
 	if mArgs.CredentialPass != "" {
-		optsFinal = append(optsFinal, fmt.Sprintf("password=%s", strings.TrimSpace(mArgs.CredentialPass)))
+		optsFinal = append(optsFinal, fmt.Sprintf("password=%s", strings.Trim(mArgs.CredentialPass, "\n\r")))
 	}
 	if mArgs.Opts != "" {
 		optsFinal = append(optsFinal, strings.Split(mArgs.Opts, ",")...)
