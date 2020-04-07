@@ -302,7 +302,7 @@ The output of `kubelet` may also give you clues and relevant error messages.
 
 A common option is to store mount credencials in a [Kubernetes Secret](https://kubernetes.io/docs/concepts/configuration/secret) object. When creating a Secret, the contents must be base 64 encoded. One of the most common ways is to use well known Linux tools, like `echo` and `base64`.
 
-While convenient, you must be careful not to accidentally include an **new line character** at the end of your password. If hidden in the Secret, it will prevent your volume from being mounted, failing with permissions errors.
+While convenient, you must be careful not to accidentally include a **new line character** at the end of your password. If hidden in the Secret, it will prevent your volume from being mounted, failing with permissions errors.
 
 ```bash
 ## Watch out for hidden new line chars
