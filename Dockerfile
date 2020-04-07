@@ -5,7 +5,7 @@ ADD . /kubernetes-cifs-volumedriver
 WORKDIR /kubernetes-cifs-volumedriver
 RUN go build -a -installsuffix cgo && go test
 
-FROM busybox:1.28.4
+FROM busybox:1.31.1
 
 ENV VENDOR=juliohm
 ENV DRIVER=cifs
