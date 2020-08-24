@@ -35,7 +35,13 @@ type returnMsg struct {
 
 // Part of the repsonse that informs the driver's capabilities
 type capabilities struct {
-	Attach bool
+	Attach          bool
+	FSGroup         bool
+	SupportsMetrics bool
+
+	// TODO: Check if these capabilities make sense for this driver.
+	// SELinuxRelabel   bool
+	// RequiresFSResize bool
 }
 
 // arguments passed by k8 to this driver
@@ -186,7 +192,9 @@ func driverMain(args []string) (ret returnMsg) {
 	case "init":
 		log.Println("Driver init")
 		ret.Status = retStatSuccess
-		ret.Capabilities.Attach = false
+		ret.Capabilities.Attach = false          // this driver does not attach any devices
+		ret.Capabilities.FSGroup = false         // avoids chown/chmod upstream in driver caller
+		ret.Capabilities.SupportsMetrics = false // there are no metrics
 	case "mount":
 		cmd := createMountCmd(args)
 		log.Println(cmd.Args)

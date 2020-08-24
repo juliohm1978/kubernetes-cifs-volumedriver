@@ -38,6 +38,12 @@ func TestInit(t *testing.T) {
 	if msg.Capabilities.Attach {
 		t.Error()
 	}
+	if msg.Capabilities.FSGroup {
+		t.Error()
+	}
+	if msg.Capabilities.SupportsMetrics {
+		t.Error()
+	}
 }
 
 func TestUnsupportedOperation(t *testing.T) {
