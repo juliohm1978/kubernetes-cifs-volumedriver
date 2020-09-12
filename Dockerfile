@@ -10,7 +10,7 @@ FROM busybox:1.31.1
 ENV VENDOR=juliohm
 ENV DRIVER=cifs
 
-COPY --from=build-env /kubernetes-cifs-volumedriver /
+COPY --from=build-env /kubernetes-cifs-volumedriver/kubernetes-cifs-volumedriver /
 COPY install.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/install.sh
 
