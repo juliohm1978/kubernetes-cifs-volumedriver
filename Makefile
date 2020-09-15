@@ -1,5 +1,7 @@
-TAGNAME = juliohm/kubernetes-cifs-volumedriver-installer
-VERSION = 2.2
+TAGNAME=juliohm/kubernetes-cifs-volumedriver-installer
+VERSION=2.3-beta
+DOCKER_CLI_EXPERIMENTAL=enabled
+PLATFORMS=linux/amd64,linux/386,linux/arm,linux/arm64,linux/ppc64le
 
 build:
 	go build -a -installsuffix cgo
@@ -7,11 +9,20 @@ build:
 test:
 	go test
 
-docker: build test
-	docker build -t $(TAGNAME):$(VERSION) .
+docker:
+	docker buildx build \
+		-t $(TAGNAME):$(VERSION) \
+		--progress plain \
+		--platform=$(PLATFORMS) \
+		.
 
-push: docker
-	docker push $(TAGNAME):$(VERSION)
+push:
+	docker buildx build \
+		--push \
+		-t $(TAGNAME):$(VERSION) \
+		--progress plain \
+		--platform=$(PLATFORMS) \
+		.
 
 install:
 	kubectl apply -f install.yaml

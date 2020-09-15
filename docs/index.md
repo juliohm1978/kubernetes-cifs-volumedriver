@@ -57,11 +57,6 @@ make test
 That should create the binary `kubernetes-cifs-volumedriver` that you can copy to your Kubernetes nodes.
 
 ```bash
-## Alternatively, you can use docker build to create the binary inside a docker image.
-make docker
-```
-
-```bash
 ## as root in all kubernetes nodes
 mkdir -p /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs
 cp -vr kubernetes-cifs-volumedriver /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs/cifs
@@ -69,6 +64,27 @@ chmod +x /usr/libexec/kubernetes/kubelet-plugins/volume/exec/juliohm~cifs/*
 ```
 
 This procedure should be simple enough for testing purposes, so feel free to automate this in any way. Once the binary is copied and marked as executable, Kubelet should automatically pick it up and it should be working.
+
+### Building a Docker image
+
+Starting at `v2.3`, the docker build for this project supports multiple architectures. In order to build the image locally without using multiple build nodes for different platforms, you need to install qemu dependencies and make sure you have Docker 19.03+ in order to use BuildKit.
+
+```
+## For Ubuntu
+sudo apt-get install qemu-user-static
+```
+
+Configure a local builder instance that uses the `docker-container` driver.
+
+```
+docker buildx create --name mybuilder --driver docker-container --use
+```
+
+```bash
+make docker
+```
+
+Throughout this build, Docker will spawn a number of qemu simulators, for each architecture not supported by the host kernel. This will consume more resources than a usual docker build.
 
 ## DaemonSet Installation
 

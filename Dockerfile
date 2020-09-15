@@ -1,11 +1,19 @@
-FROM golang:alpine AS build-env
-RUN apk --no-cache add build-base git gcc
+FROM golang:1.15.2 AS build-env
+ARG TARGETOS
+ARG TARGETARCH
+ENV GOOS=${TARGETOS}
+ENV GOARCH=${TARGETARCH}
 
+RUN apt-get update && apt-get install -y git gcc
 ADD . /kubernetes-cifs-volumedriver
 WORKDIR /kubernetes-cifs-volumedriver
-RUN go build -a -installsuffix cgo && go test
 
-FROM busybox:1.31.1
+## Running these in separate steps gives a better error 
+## output indicating which one actually failed.
+RUN go build -a -installsuffix cgo
+RUN go test
+
+FROM busybox:1.32.0
 
 ENV VENDOR=juliohm
 ENV DRIVER=cifs
