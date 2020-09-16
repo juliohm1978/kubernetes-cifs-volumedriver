@@ -1,5 +1,5 @@
 TAGNAME=juliohm/kubernetes-cifs-volumedriver-installer
-VERSION=2.3-beta
+VERSION=2.3
 DOCKER_CLI_EXPERIMENTAL=enabled
 PLATFORMS=linux/amd64,linux/386,linux/arm,linux/arm64,linux/ppc64le
 

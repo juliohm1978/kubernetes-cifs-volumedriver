@@ -13,7 +13,7 @@ spec:
         app: juliohm-cifs-volumedriver-installer
     spec:
       containers:
-        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.2
+        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.3
           name: flex-deploy
           imagePullPolicy: Always
           securityContext:

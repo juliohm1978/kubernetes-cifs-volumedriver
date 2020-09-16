@@ -134,7 +134,7 @@ For some installations, you may need to change the vendor+driver name. Starting 
 ## snippet ##
 
       containers:
-        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.2
+        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.3
           env:
             - name: VENDOR
               value: mycompany
