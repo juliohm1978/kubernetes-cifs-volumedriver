@@ -14,6 +14,7 @@ It has been tested under Kubernetes versions:
 * 1.15.x
 * 1.16.x
 * 1.17.x
+* 1.18.x
 
 > NOTE: Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
 >

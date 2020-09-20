@@ -16,6 +16,7 @@ It has been tested under Kubernetes versions:
 * 1.15.x
 * 1.16.x
 * 1.17.x
+* 1.18.x
 
 ## Documentation moved go Github Pages
 
