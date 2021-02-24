@@ -43,7 +43,7 @@ yum -y install cifs-utils
 
 Flexvolumes are very straight forward. The driver needs to be copied into a special volume plugin directory of your Kubernetes cluster.
 
-For manuall installation, you will need to compile the code to create the binary executable. If you have Go installed, it should be easy as `make`.
+For manual installation, you will need to compile the code to create the binary executable. If you have Go installed, it should be easy as `make`.
 
 ```bash
 go get github.com/juliohm1978/kubernetes-cifs-volumedriver
