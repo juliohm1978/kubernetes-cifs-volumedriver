@@ -1,4 +1,4 @@
-FROM golang:1.15.2 AS build-env
+FROM golang:1.16.3 AS build-env
 ARG TARGETOS
 ARG TARGETARCH
 ENV GOOS=${TARGETOS}
