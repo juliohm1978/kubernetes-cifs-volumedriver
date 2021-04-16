@@ -58,6 +58,7 @@ type mounterArgs struct {
 	Opts             string `json:"opts"`
 	Server           string `json:"server"`
 	Share            string `json:"share"`
+	PasswdMethod     string `json:"passwdMethod"`
 	CredentialDomain string `json:"kubernetes.io/secret/domain"`
 	CredentialUser   string `json:"kubernetes.io/secret/username"`
 	CredentialPass   string `json:"kubernetes.io/secret/password"`
@@ -144,7 +145,12 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 		optsFinal = append(optsFinal, fmt.Sprintf("username=%s", strings.Trim(mArgs.CredentialUser, "\n\r")))
 	}
 	if mArgs.CredentialPass != "" {
-		optsFinal = append(optsFinal, fmt.Sprintf("password=%s", strings.Trim(mArgs.CredentialPass, "\n\r")))
+		if mArgs.PasswdMethod == "env" {
+			//cmd.Env = []string{fmt.Sprintf("PASSWD=%s", strings.Trim(mArgs.CredentialPass, "\n\r"))}
+			cmd.Env = append(os.Environ(), fmt.Sprintf("PASSWD=%s", strings.Trim(mArgs.CredentialPass, "\n\r")))
+		} else {
+			optsFinal = append(optsFinal, fmt.Sprintf("password=%s", strings.Trim(mArgs.CredentialPass, "\n\r")))
+		}
 	}
 	if mArgs.Opts != "" {
 		optsFinal = append(optsFinal, strings.Split(mArgs.Opts, ",")...)
@@ -156,7 +162,7 @@ func createMountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	cmd.Args = append(cmd.Args, fmt.Sprintf("//%s%s", mArgs.Server, mArgs.Share))
 	cmd.Args = append(cmd.Args, cmdLineArgs[2])
 
-	return
+	return cmd
 }
 
 func createUmountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
@@ -165,7 +171,7 @@ func createUmountCmd(cmdLineArgs []string) (cmd *exec.Cmd) {
 	}
 	cmd = exec.Command("umount")
 	cmd.Args = append(cmd.Args, cmdLineArgs[2])
-	return
+	return cmd
 }
 
 // Dettach from main, allows tests to be written for this function
