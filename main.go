@@ -183,6 +183,7 @@ func driverMain(args []string) (ret returnMsg) {
 	defer func() {
 		err := recover()
 		if err != nil {
+			ret.Status = retStatFailure
 			ret.Message = fmt.Sprintf("Unexpected executing volume driver: %s", err)
 			return
 		}
