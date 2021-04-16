@@ -109,8 +109,10 @@ func runCommand(cmd *exec.Cmd) error {
 
 	if err := cmd.Wait(); err != nil {
 		if exiterr, ok := err.(*exec.ExitError); ok {
-			if _, ok := exiterr.Sys().(syscall.WaitStatus); ok {
+			status, ok := exiterr.Sys().(syscall.WaitStatus)
+			if ok && status.ExitStatus() != 32 {
 				// The program has exited with an exit code != 0
+				// Status code 32 means not mounted
 				return errors.Wrapf(err, "Error running cmd [cmd=%s] [response=%s]", cmd, string(b.Bytes()))
 			}
 		} else {
