@@ -15,6 +15,7 @@ It has been tested under Kubernetes versions:
 * 1.16.x
 * 1.17.x
 * 1.18.x
+* 1.20.x
 
 > NOTE: Starting at v2.0, the driver has been fully reimplemented using [Go](https://golang.org/). As a full-fledged programming language, it provides a more robust solution and better error handling.
 >
@@ -135,7 +136,7 @@ For some installations, you may need to change the vendor+driver name. Starting 
 ## snippet ##
 
       containers:
-        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.3
+        - image: juliohm/kubernetes-cifs-volumedriver-installer:2.4
           env:
             - name: VENDOR
               value: mycompany
@@ -184,6 +185,39 @@ metadata:
   name: my-secret
 type: juliohm/cifs
 ```
+
+## Passwords with comma
+
+In a perfectly reasonable scenario, passwords may be required to have special characters. In general, this driver no longer depends on shell variable parsing, so most special characters will work as expected.
+
+An exception case can be made for commas, which is closely related to how `mount` implements its own argument parsing. The official workaround suggested is to use a `PASSWD` environment variable to store the password temporarily.
+
+https://linux.die.net/man/8/mount.cifs
+
+This driver includes an option to use that method as an alternative. If your password has commas, try enabling it with the option `passwdMethod: env`.
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mycifspv
+spec:
+  capacity:
+    storage: 1Gi
+  flexVolume:
+    driver: juliohm/cifs
+    options:
+      opts: sec=ntlm,uid=1000
+      server: my-cifs-host
+      share: /MySharedDirectory
+      passwdMethod: env
+    secretRef:
+      name: my-secret
+  accessModes:
+    - ReadWriteMany
+```
+
+This causes the driver to use the `PASSWD` environment variable, instead of the usual `password=***` option in the command line.
 
 ## Using `securityContext` to inform uid/gid parameters
 

@@ -1,7 +1,8 @@
 TAGNAME=juliohm/kubernetes-cifs-volumedriver-installer
-VERSION=2.3
+VERSION=2.4
 DOCKER_CLI_EXPERIMENTAL=enabled
 PLATFORMS=linux/amd64,linux/386,linux/arm,linux/arm64,linux/ppc64le
+# PLATFORMS=linux/amd64
 
 build:
 	go build -a -installsuffix cgo
@@ -10,14 +11,14 @@ test:
 	go test
 
 docker:
-	docker buildx build \
+	sudo docker buildx build \
 		-t $(TAGNAME):$(VERSION) \
 		--progress plain \
 		--platform=$(PLATFORMS) \
 		.
 
 push:
-	docker buildx build \
+	sudo docker buildx build \
 		--push \
 		-t $(TAGNAME):$(VERSION) \
 		--progress plain \
