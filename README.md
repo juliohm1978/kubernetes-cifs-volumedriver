@@ -20,4 +20,7 @@ It has been tested under Kubernetes versions:
 
 ## Documentation moved go Github Pages
 
-Head over to <https://k8scifsvol.juliohm.com.br> for a complete installation guide and examples.
+Head over to <https://k8scifsvol.morimoto.net.br> for a complete installation guide and examples.
+
+> WARNING: The documentation for this project is no longer hosted as subdomain of juliohm.com.br.
+> Afer Nov/7th/2021, the domain has changed to <https://k8scifsvol.morimoto.net.br>
