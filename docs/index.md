@@ -26,19 +26,21 @@ It has been tested under Kubernetes versions:
 
 ## Pre-requisites
 
-On your Kubernetes nodes, simply install the dependency:
+On your Kubernetes nodes, install `cifs-utils` because the host itself will do the mounting.
 
-* `cifs-utils` because the host itself will do the mounting
+For Debian-based distributions:
 
 ```bash
 sudo apt-get install -y cifs-utils
 ```
 
-For CentOS:
+For RedHat distributions:
 
 ```bash
 yum -y install cifs-utils
 ```
+
+If you are planning to mount DFS shares, you also need `keyutils` ([Ubuntu](https://bugs.launchpad.net/ubuntu/+source/cifs-utils/+bug/1772148), [RedHat](https://access.redhat.com/solutions/45070)).
 
 ## Manual Installation
 
