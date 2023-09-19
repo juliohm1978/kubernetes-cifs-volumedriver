@@ -6,7 +6,7 @@
 
 As of September 2023, personally, I have had no time to maintain this repo. It hasn't had any updates for some time now, and my current work schedule and priorities doe not allow me the time for it.
 
-Support for flexVolumes is not deprecated and will soon be removed from Kubernete's main releases.
+Support for flexVolumes is now deprecated and will soon be removed from Kubernete's main releases.
 https://github.com/juliohm1978/kubernetes-cifs-volumedriver/issues/36
 
 I have no plans to implement this using the new CSI spec. Feel free to search for the best alternatives. I would like to thank the entire community for embracing this initial implementation. It's been a pleasure!
